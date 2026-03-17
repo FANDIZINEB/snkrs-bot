@@ -3,8 +3,8 @@ import time
 from datetime import datetime
 import os
 
-# ✅ DETECTER CLOUD (Streamlit Cloud)
-IS_CLOUD = os.getenv("STREAMLIT_SERVER_HEADLESS") is not None
+# ✅ DETECTER CLOUD (FIABLE)
+IS_CLOUD = "STREAMLIT_RUNTIME" in os.environ
 
 # ✅ IMPORT CONDITIONNEL
 if not IS_CLOUD:
@@ -46,7 +46,7 @@ if col2.button("⛔ STOP"):
 # TEST OPEN
 if col3.button("🧪 Tester ouverture Nike"):
     st.session_state.logs.append("Test ouverture navigateur")
-    if start_browser:
+    if not IS_CLOUD:
         start_browser(URL)
     else:
         st.warning("Mode démo : navigateur désactivé")
@@ -54,7 +54,7 @@ if col3.button("🧪 Tester ouverture Nike"):
 # TEST FULL
 if col4.button("🔥 Test complet"):
     st.session_state.logs.append("Test complet lancé")
-    if run_task:
+    if not IS_CLOUD:
         run_task(URL, ["42"], 1, 1)
     else:
         st.warning("Mode démo : bot désactivé")
@@ -91,7 +91,7 @@ if st.session_state.running:
 
         sizes_list = sizes.split(",")
 
-        if run_task:
+        if not IS_CLOUD:
             run_task(URL, sizes_list, RETRY, DELAY)
         else:
             st.warning("Mode démo : bot désactivé")
