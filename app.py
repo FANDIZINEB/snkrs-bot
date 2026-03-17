@@ -1,7 +1,18 @@
 import streamlit as st
 import time
 from datetime import datetime
-from bot import run_task, start_browser
+import os
+
+# ✅ DETECTER CLOUD (Streamlit Cloud)
+IS_CLOUD = os.getenv("STREAMLIT_SERVER_HEADLESS") is not None
+
+# ✅ IMPORT CONDITIONNEL
+if not IS_CLOUD:
+    from bot import run_task, start_browser
+else:
+    run_task = None
+    start_browser = None
+
 from config import URL, DROP_TIME, SIZES, RETRY, DELAY
 from notifier import notify
 
@@ -35,12 +46,18 @@ if col2.button("⛔ STOP"):
 # TEST OPEN
 if col3.button("🧪 Tester ouverture Nike"):
     st.session_state.logs.append("Test ouverture navigateur")
-    start_browser(URL)
+    if start_browser:
+        start_browser(URL)
+    else:
+        st.warning("Mode démo : navigateur désactivé")
 
 # TEST FULL
 if col4.button("🔥 Test complet"):
     st.session_state.logs.append("Test complet lancé")
-    run_task(URL, ["42"], 1, 1)
+    if run_task:
+        run_task(URL, ["42"], 1, 1)
+    else:
+        st.warning("Mode démo : bot désactivé")
 
 # --- COUNTDOWN ---
 def get_remaining_time(target):
@@ -74,7 +91,10 @@ if st.session_state.running:
 
         sizes_list = sizes.split(",")
 
-        run_task(URL, sizes_list, RETRY, DELAY)
+        if run_task:
+            run_task(URL, sizes_list, RETRY, DELAY)
+        else:
+            st.warning("Mode démo : bot désactivé")
 
         st.session_state.logs.append("Tentative terminée")
         st.session_state.running = False
