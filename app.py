@@ -1,13 +1,11 @@
 import streamlit as st
 import time
 from datetime import datetime
-import os
 
-# ✅ DETECTER CLOUD (FIABLE)
-IS_CLOUD = "STREAMLIT_RUNTIME" in os.environ
+# ❌ PAS D’IMPORT SELENIUM SUR CLOUD
+RUN_LOCAL = False   # 🔥 IMPORTANT
 
-# ✅ IMPORT CONDITIONNEL
-if not IS_CLOUD:
+if RUN_LOCAL:
     from bot import run_task, start_browser
 else:
     run_task = None
@@ -46,18 +44,12 @@ if col2.button("⛔ STOP"):
 # TEST OPEN
 if col3.button("🧪 Tester ouverture Nike"):
     st.session_state.logs.append("Test ouverture navigateur")
-    if not IS_CLOUD:
-        start_browser(URL)
-    else:
-        st.warning("Mode démo : navigateur désactivé")
+    st.warning("Mode démo : navigateur désactivé")
 
 # TEST FULL
 if col4.button("🔥 Test complet"):
     st.session_state.logs.append("Test complet lancé")
-    if not IS_CLOUD:
-        run_task(URL, ["42"], 1, 1)
-    else:
-        st.warning("Mode démo : bot désactivé")
+    st.warning("Mode démo : bot désactivé")
 
 # --- COUNTDOWN ---
 def get_remaining_time(target):
@@ -89,12 +81,7 @@ if st.session_state.running:
         st.write("🔥 DROP EN COURS !!!")
         notify("DROP !")
 
-        sizes_list = sizes.split(",")
-
-        if not IS_CLOUD:
-            run_task(URL, sizes_list, RETRY, DELAY)
-        else:
-            st.warning("Mode démo : bot désactivé")
+        st.warning("Mode démo : bot désactivé")
 
         st.session_state.logs.append("Tentative terminée")
         st.session_state.running = False
